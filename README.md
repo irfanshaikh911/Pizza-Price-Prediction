@@ -30,5 +30,5 @@ To run this project locally, follow these steps:
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/yourusername/pizza-price-prediction.git
+   git clone https://github.com/irfanshaikh911/pizza-price-prediction.git
    cd pizza-price-prediction
