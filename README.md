@@ -14,6 +14,7 @@ The goal of this project is to predict the price of a pizza by identifying key f
 - **joblib**: For saving and loading the model efficiently.
 - **pickle**: For serializing the trained model.
 - **Flask**: For deploying the model via a web application.
+- **sqlite3**: For managing and interacting with the SQLite database to store and retrieve pizza data.
 
 ## Features
 
@@ -29,11 +30,5 @@ To run this project locally, follow these steps:
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/irfanshaikh911/pizza-price-prediction.git
+   git clone https://github.com/yourusername/pizza-price-prediction.git
    cd pizza-price-prediction
-
-## Install the required dependencies:
-    pip install -r requirements.txt
-
-## Run the Flask app:
-    python app.py
