@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pizza Price Prediction</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            width: 350px;
+            text-align: center;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            font-size: 16px;
+            margin-bottom: 5px;
+            color: #444;
+        }
+
+        select, input[type="text"], input[type="number"] {
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        button {
+            padding: 10px;
+            background-color: #28a745;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #218838;
+        }
+
+        .prediction-result {
+            margin-top: 20px;
+        }
+
+        .prediction-result h2 {
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Pizza Price Predictor</h1>
+        <form action="/predict" method="POST">
+            <label for="quantity">Quantity:</label>
+            <input type="number" id="quantity" name="quantity" min="1" placeholder="Enter quantity" required>
+
+            <label for="unit_price">Unit Price:</label>
+            <input type="number" id="unit_price" name="unit_price" step="0.01" placeholder="Enter unit price" required>
+
+            <label for="pizza_name">Pizza Name:</label>
+            <input type="text" id="pizza_name" name="pizza_name" placeholder="Enter pizza name" required>
+
+            <label for="pizza_category">Pizza Category:</label>
+            <select id="pizza_category" name="pizza_category" required>
+                <option value="veg">Vegetarian</option>
+                <option value="non-veg">Non-Vegetarian</option>
+            </select>
+
+            <label for="pizza_ingredients">Pizza Ingredients:</label>
+            <input type="text" id="pizza_ingredients" name="pizza_ingredients" placeholder="Enter ingredients" required>
+
+            <button type="submit">Predict Price</button>
+        </form>
+
+        <div class="prediction-result">
+            {% if price %}
+            <h2>Estimated Price: ${{ price }}</h2>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pizza Price Prediction</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            width: 400px;
+            text-align: center;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            font-size: 16px;
+            margin-bottom: 5px;
+            color: #444;
+        }
+
+        select, input[type="text"], input[type="number"], textarea {
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        button {
+            padding: 10px;
+            background-color: #28a745;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #218838;
+        }
+
+        .prediction-result {
+            margin-top: 20px;
+        }
+
+        .prediction-result h2 {
+            color: #333;
+        }
+    </style>
+    <script>
+        // Pizza names and corresponding ingredients
+        const pizzaData = {
+            'The Hawaiian Pizza': 'Sliced Ham, Pineapple, Mozzarella Cheese',
+            'The Classic Deluxe Pizza': 'Pepperoni, Mushrooms, Red Onions, Red Peppers, Bacon',
+            'The Five Cheese Pizza': 'Mozzarella Cheese, Provolone Cheese, Smoked Gouda Cheese, Romano Cheese, Blue Cheese, Garlic',
+            'The Italian Supreme Pizza': 'Calabrese Salami, Capocollo, Tomatoes, Red Onions, Green Olives, Garlic',
+            'The Mexicana Pizza': 'Tomatoes, Red Peppers, Jalapeno Peppers, Red Onions, Cilantro, Corn, Chipotle Sauce, Garlic',
+            'The Thai Chicken Pizza': 'Chicken, Pineapple, Tomatoes, Red Peppers, Thai Sweet Chilli Sauce',
+            'The Prosciutto and Arugula Pizza': 'Prosciutto di San Daniele, Arugula, Mozzarella Cheese',
+            'The Barbecue Chicken Pizza': 'Barbecued Chicken, Red Peppers, Green Peppers, Tomatoes, Red Onions, Barbecue Sauce',
+            'The Greek Pizza': 'Kalamata Olives, Feta Cheese, Tomatoes, Garlic, Beef Chuck Roast, Red Onions',
+            'The Spinach Supreme Pizza': 'Spinach, Red Onions, Pepperoni, Tomatoes, Artichokes, Kalamata Olives, Garlic, Asiago Cheese',
+            'The Green Garden Pizza': 'Spinach, Mushrooms, Tomatoes, Green Olives, Feta Cheese',
+            'The Italian Capocollo Pizza': 'Capocollo, Red Peppers, Tomatoes, Goat Cheese, Garlic, Oregano',
+            'The Spicy Italian Pizza': 'Capocollo, Tomatoes, Goat Cheese, Artichokes, Peperoncini verdi, Garlic',
+            'The Spinach Pesto Pizza': 'Spinach, Artichokes, Tomatoes, Sun-dried Tomatoes, Garlic, Pesto Sauce',
+            'The Vegetables + Vegetables Pizza': 'Mushrooms, Tomatoes, Red Peppers, Green Peppers, Red Onions, Zucchini, Spinach, Garlic',
+            'The Southwest Chicken Pizza': 'Chicken, Tomatoes, Red Peppers, Red Onions, Jalapeno Peppers, Corn, Cilantro, Chipotle Sauce',
+            'The California Chicken Pizza': 'Chicken, Artichoke, Spinach, Garlic, Jalapeno Peppers, Fontina Cheese, Gouda Cheese',
+            'The Pepperoni Pizza': 'Mozzarella Cheese, Pepperoni',
+            'The Chicken Pesto Pizza': 'Chicken, Tomatoes, Red Peppers, Spinach, Garlic, Pesto Sauce',
+            'The Big Meat Pizza': 'Bacon, Pepperoni, Italian Sausage, Chorizo Sausage',
+            'The Soppressata Pizza': 'Soppressata Salami, Fontina Cheese, Mozzarella Cheese, Mushrooms, Garlic',
+            'The Four Cheese Pizza': 'Ricotta Cheese, Gorgonzola Piccante Cheese, Mozzarella Cheese, Parmigiano Reggiano Cheese, Garlic',
+            'The Napolitana Pizza': 'Tomatoes, Anchovies, Green Olives, Red Onions, Garlic',
+            'The Calabrese Pizza': 'Nduja Salami, Pancetta, Tomatoes, Red Onions, Friggitello Peppers, Garlic',
+            'The Italian Vegetables Pizza': 'Eggplant, Artichokes, Tomatoes, Zucchini, Red Peppers, Garlic, Pesto Sauce',
+            'The Mediterranean Pizza': 'Spinach, Artichokes, Kalamata Olives, Sun-dried Tomatoes, Feta Cheese, Plum Tomatoes, Red Onions',
+            'The Pepper Salami Pizza': 'Genoa Salami, Capocollo, Pepperoni, Tomatoes, Asiago Cheese, Garlic',
+            'The Spinach and Feta Pizza': 'Spinach, Mushrooms, Red Onions, Feta Cheese, Garlic',
+            'The Sicilian Pizza': 'Coarse Sicilian Salami, Tomatoes, Green Olives, Luganega Sausage, Onions, Garlic',
+            'The Chicken Alfredo Pizza': 'Chicken, Red Onions, Red Peppers, Mushrooms, Asiago Cheese, Alfredo Sauce',
+            'The Pepperoni, Mushroom, and Peppers Pizza': 'Pepperoni, Mushrooms, Green Peppers',
+            'The Brie Carre Pizza': 'Brie Carre Cheese, Prosciutto, Caramelized Onions, Pears, Thyme, Garlic'
+        };
+
+        // Function to update ingredients based on pizza selection
+        function updateIngredients() {
+            const pizzaName = document.getElementById('pizza_name').value;
+            const ingredients = pizzaData[pizzaName];
+            document.getElementById('pizza_ingredients').value = ingredients || '';
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h1>Pizza Price Predictor</h1>
+        <form id="pizzaForm" action="/predict" method="POST">
+            <label for="quantity">Quantity:</label>
+            <input type="number" id="quantity" name="quantity" min="1" placeholder="Enter quantity" required>
+
+            <label for="pizza_category">Pizza Category:</label>
+            <select id="pizza_category" name="pizza_category" required>
+                <option value="">Select a category</option>
+                <option value="Classic">Classic</option>
+                <option value="Veggie">Veggie</option>
+                <option value="Supreme">Supreme</option>
+                <option value="Chicken">Chicken</option>
+            </select>
+
+            <label for="pizza_size">Pizza Size:</label>
+            <select id="pizza_size" name="pizza_size" required>
+                <option value="">Select a size</option>
+                <option value="S">Small</option>
+                <option value="M">Medium</option>
+                <option value="L">Large</option>
+                <option value="XL">Extra Large</option>
+                <option value="XXL">Double Extra Large</option>
+            </select>
+
+            <label for="pizza_name">Pizza Name:</label>
+            <select id="pizza_name" name="pizza_name" onchange="updateIngredients()" required>
+                <option value="">Select a pizza</option>
+                <option value="The Hawaiian Pizza">The Hawaiian Pizza</option>
+                <option value="The Classic Deluxe Pizza">The Classic Deluxe Pizza</option>
+                <option value="The Five Cheese Pizza">The Five Cheese Pizza</option>
+                <option value="The Italian Supreme Pizza">The Italian Supreme Pizza</option>
+                <option value="The Mexicana Pizza">The Mexicana Pizza</option>
+                <option value="The Thai Chicken Pizza">The Thai Chicken Pizza</option>
+                <option value="The Prosciutto and Arugula Pizza">The Prosciutto and Arugula Pizza</option>
+                <option value="The Barbecue Chicken Pizza">The Barbecue Chicken Pizza</option>
+                <option value="The Greek Pizza">The Greek Pizza</option>
+                <option value="The Spinach Supreme Pizza">The Spinach Supreme Pizza</option>
+                <!-- Add more pizzas as needed -->
+            </select>
+
+            <label for="pizza_ingredients">Pizza Ingredients:</label>
+            <textarea id="pizza_ingredients" name="pizza_ingredients" readonly></textarea>
+
+            <button type="submit">Predict Price</button>
+        </form>
+
+        {% if result %}
+            <div class="prediction-result">
+                <h2>Predicted Price: ${{ result }}</h2>
+            </div>
+        {% elif error %}
+            <div class="error">{{ error }}</div>
+        {% endif %}
+    </div>
+</body>
+</html>
